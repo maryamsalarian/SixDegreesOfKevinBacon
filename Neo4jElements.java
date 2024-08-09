@@ -167,6 +167,76 @@ public class Neo4jElements implements AutoCloseable {
         return resultInfo.toString().trim();
     }
 
+    public int computeBaconNumber(String targetActorId) {
+        String kevinBaconId = "";
+        try (Session session = driver.session()) {
+            StatementResult result = session.run(
+                    "MATCH (bacon:Actor {name: 'Kevin Bacon'}) RETURN bacon.actorId AS actorId"
+            );
+            if (result.hasNext()) {
+                kevinBaconId = result.single().get("actorId").asString();
+            }
+        } catch (Neo4jException e) {
+            throw new RuntimeException("Failed to retrieve Kevin Bacon's ID: " + e.getMessage(), e);
+        }
+        if (targetActorId.equals(kevinBaconId)) {
+            return 0;
+        }
+        int baconNumber = -1;
+        try (Session session = driver.session()) {
+            StatementResult result = session.run(
+                    "MATCH (bacon:Actor {name: 'Kevin Bacon'}), (target:Actor {actorId: $targetActorId}) " +
+                            "MATCH p = shortestPath((target)-[:ACTED_IN*]-(bacon)) " +
+                            "RETURN length(p)/2 AS baconNumber",
+                    Values.parameters("targetActorId", targetActorId)
+            );
+            if (result.hasNext()) {
+                Record record = result.single();
+                baconNumber = record.get("baconNumber").asInt();
+            }
+        } catch (Neo4jException e) {
+            throw new RuntimeException("Failed to compute Bacon number: " + e.getMessage(), e);
+        }
+        return baconNumber;
+    }
+
+    public String computeBaconPath(String targetActorId) {
+        String kevinBaconId = "";
+        try (Session session = driver.session()) {
+            StatementResult result = session.run(
+                    "MATCH (bacon:Actor {name: 'Kevin Bacon'}) RETURN bacon.actorId AS actorId"
+            );
+            if (result.hasNext()) {
+                kevinBaconId = result.single().get("actorId").asString();
+            }
+        } catch (Neo4jException e) {
+            throw new RuntimeException("Failed to retrieve Kevin Bacon's ID: " + e.getMessage(), e);
+        }
+        if (targetActorId.equals(kevinBaconId)) {
+            return "[" + kevinBaconId + "]";
+        }
+        StringBuilder baconPath = new StringBuilder();
+        try (Session session = driver.session()) {
+            StatementResult result = session.run(
+                    "MATCH (bacon:Actor {name: 'Kevin Bacon'}), (target:Actor {actorId: $targetActorId}) " +
+                            "MATCH p = shortestPath((target)-[:ACTED_IN*]-(bacon)) " +
+                            "WITH nodes(p) AS path_nodes " +
+                            "RETURN [node IN path_nodes | CASE " +
+                            "    WHEN node:Actor THEN node.actorId " +
+                            "    WHEN node:Movie THEN node.movieId " +
+                            "END] AS baconPath",
+                    Values.parameters("targetActorId", targetActorId)
+            );
+            if (result.hasNext()) {
+                Record record = result.single();
+                baconPath.append(record.get("baconPath").asList().toString());
+            }
+        } catch (Neo4jException e) {
+            throw new RuntimeException("Failed to compute Bacon path: " + e.getMessage(), e);
+        }
+        return baconPath.toString();
+    }
+
     public String getMoviesAboveRating(int rating) {
         StringBuilder movieIds = new StringBuilder();
         try (Session session = driver.session()) {
