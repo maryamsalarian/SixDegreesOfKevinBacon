@@ -19,18 +19,30 @@ public class App {
         neo4j.addActor("Leonardo DiCaprio", "A1001");
         neo4j.addActor("Meryl Streep", "A1002");
         neo4j.addActor("Jennifer Lawrence", "A1003");
+        neo4j.addActor("Tom Hanks", "A1004");
+        neo4j.addActor("Meg Ryan", "A1005");
         neo4j.addMovie("The Hunger Games", "M1000");
         neo4j.addMovie("Shutter Island", "M1001");
         neo4j.addMovie("Don't Look Up", "M1002");
         neo4j.addMovie("X-Men: First Class", "M1003");
         neo4j.addMovie("Mortal Kombat", "M1004");
         neo4j.addMovie("Dumb and Dumber", "M1005");
+        neo4j.addMovie("Apollo 13", "M1006");
+        neo4j.addMovie("Sleepless in Seattle", "M1007");
+        neo4j.addMovie("You've Got Mail", "M1008");
         neo4j.addRelationship("A1001", "M1001");
         neo4j.addRelationship("A1003", "M1000");
         neo4j.addRelationship("A1001", "M1002");
         neo4j.addRelationship("A1003", "M1002");
         neo4j.addRelationship("A1003", "M1003");
         neo4j.addRelationship("A1000", "M1003");
+        neo4j.addRelationship("A1005", "M1008");
+        neo4j.addRelationship("A1005", "M1007");
+        neo4j.addRelationship("A1004", "M1008");
+        neo4j.addRelationship("A1004", "M1007");
+        neo4j.addRelationship("A1004", "M1006");
+        neo4j.addRelationship("A1000", "M1006");
+        neo4j.addRelationship("A1002", "M1002");
         neo4j.addMovieRating("M1004", 5);
         neo4j.addMovieRating("M1000", 7);
         neo4j.addMovieRating("M1005", 7);
@@ -40,6 +52,5 @@ public class App {
         neo4j.addActorAward("A1000", "Golden Globe");
         neo4j.addActorAward("A1001", "Oscar");
         neo4j.addActorAward("A1002", "Oscar");
-
     }
 }
