@@ -355,5 +355,4 @@ public class Neo4jElements implements AutoCloseable {
     public void close() throws Exception {
         driver.close();
     }
-
 }
