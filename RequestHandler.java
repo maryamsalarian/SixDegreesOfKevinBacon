@@ -109,8 +109,8 @@ public class RequestHandler implements HttpHandler {
                 String path = requestUri.getPath();
                 switch (path) {
                     case "/api/v1/getActor":
-                        if (requestBody.contains("actorId")) {
-                            response = handleGetActor(requestBody);
+                        if (queryParams.containsKey("actorId")) {
+                            response = handleGetActor(queryParams.get("actorId"));
                             if (response.isEmpty()) {
                                 statusCode = 404;
                                 response = "Actor Not Found";
@@ -121,8 +121,8 @@ public class RequestHandler implements HttpHandler {
                         }
                         break;
                     case "/api/v1/getMovie":
-                        if (requestBody.contains("movieId")) {
-                            response = handleGetMovie(requestBody);
+                        if (queryParams.containsKey("movieId")) {
+                            response = handleGetMovie(queryParams.get("movieId"));
                             if (response.isEmpty()) {
                                 statusCode = 404;
                                 response = "Movie Not Found";
@@ -133,8 +133,8 @@ public class RequestHandler implements HttpHandler {
                         }
                         break;
                     case "/api/v1/hasRelationship":
-                        if (requestBody.contains("actorId") && requestBody.contains("movieId")) {
-                            response = handleHasRelationship(requestBody);
+                        if (queryParams.containsKey("actorId") && queryParams.containsKey("movieId")) {
+                            response = handleHasRelationship(queryParams.get("actorId"), queryParams.get("movieId"));
                             if (response.isEmpty()) {
                                 statusCode = 404;
                                 response = "Actor and/or Movie Not Found";
@@ -145,8 +145,8 @@ public class RequestHandler implements HttpHandler {
                         }
                         break;
                     case "/api/v1/computeBaconNumber":
-                        if (requestBody.contains("actorId")) {
-                            response = handleComputeBaconNumber(requestBody);
+                        if (queryParams.containsKey("actorId")) {
+                            response = handleComputeBaconNumber(queryParams.get("actorId"));
                             if (response.isEmpty()) {
                                 statusCode = 404;
                                 response = "Actor Not Found";
@@ -157,8 +157,8 @@ public class RequestHandler implements HttpHandler {
                         }
                         break;
                     case "/api/v1/computeBaconPath":
-                        if (requestBody.contains("actorId")) {
-                            response = handleComputeBaconPath(requestBody);
+                        if (queryParams.containsKey("actorId")) {
+                            response = handleComputeBaconPath(queryParams.get("actorId"));
                             if (response.isEmpty()) {
                                 statusCode = 404;
                                 response = "Actor Not Found";
@@ -169,8 +169,8 @@ public class RequestHandler implements HttpHandler {
                         }
                         break;
                     case "/api/v1/getMoviesAboveRating":
-                        if (requestBody.contains("rating")) {
-                            response = handleGetMoviesAboveRating(requestBody);
+                        if (queryParams.containsKey("rating")) {
+                            response = handleGetMoviesAboveRating(queryParams.get("rating"));
                             if (response.isEmpty()) {
                                 statusCode = 404;
                                 response = "No movies found";
@@ -181,8 +181,8 @@ public class RequestHandler implements HttpHandler {
                         }
                         break;
                     case "/api/v1/getMoviesByYear":
-                        if (requestBody.contains("year")) {
-                            response = handleGetMoviesByYear(requestBody);
+                        if (queryParams.containsKey("year")) {
+                            response = handleGetMoviesByYear(queryParams.get("year"));
                             if (response.isEmpty()) {
                                 statusCode = 404;
                                 response = "No movies found";
@@ -193,8 +193,8 @@ public class RequestHandler implements HttpHandler {
                         }
                         break;
                     case "/api/v1/getActorsByAward":
-                        if (requestBody.contains("award")) {
-                            response = handleGetActorsByAward(requestBody);
+                        if (queryParams.containsKey("award")) {
+                            response = handleGetActorsByAward(queryParams.get("award"));
                             if (response.isEmpty()) {
                                 statusCode = 404;
                                 response = "No actors found";
@@ -280,52 +280,37 @@ public class RequestHandler implements HttpHandler {
         return neo4j.addActorAward(actorId, award);
     }
 
-    private String handleGetActor(String requestBody) throws JSONException {
-        JSONObject json = new JSONObject(requestBody);
-        String actorId = json.getString("actorId");
+    private String handleGetActor(String actorId) throws JSONException {
         return neo4j.getActor(actorId);
     }
 
-    private String handleGetMovie(String requestBody) throws JSONException {
-        JSONObject json = new JSONObject(requestBody);
-        String movieId = json.getString("movieId");
+    private String handleGetMovie(String movieId) throws JSONException {
         return neo4j.getMovie(movieId);
     }
 
-    private String handleHasRelationship(String requestBody) throws JSONException {
-        JSONObject json = new JSONObject(requestBody);
-        String actorId = json.getString("actorId");
-        String movieId = json.getString("movieId");
+    private String handleHasRelationship(String actorId,String movieId) throws JSONException {
         return neo4j.hasRelationship(actorId, movieId);
     }
 
-    private String handleComputeBaconNumber(String requestBody) throws JSONException {
-        JSONObject json = new JSONObject(requestBody);
-        String actorId = json.getString("actorId");
+    private String handleComputeBaconNumber(String actorId) throws JSONException {
         return neo4j.computeBaconNumber(actorId);
     }
 
-    private String handleComputeBaconPath(String requestBody) throws JSONException {
-        JSONObject json = new JSONObject(requestBody);
-        String actorId = json.getString("actorId");
+    private String handleComputeBaconPath(String actorId) throws JSONException {
         return neo4j.computeBaconPath(actorId);
     }
 
-    private String handleGetMoviesAboveRating(String requestBody) throws JSONException {
-        JSONObject json = new JSONObject(requestBody);
-        int rating = json.getInt("rating");
-        return neo4j.getMoviesAboveRating(rating);
+    private String handleGetMoviesAboveRating(String rating) throws JSONException {
+        int rate = Integer.parseInt(rating);
+        return neo4j.getMoviesAboveRating(rate);
     }
 
-    private String handleGetMoviesByYear(String requestBody) throws JSONException {
-        JSONObject json = new JSONObject(requestBody);
-        int year = json.getInt("year");
-        return neo4j.getMoviesByYear(year);
+    private String handleGetMoviesByYear(String year) throws JSONException {
+        int yearReleased = Integer.parseInt(year);
+        return neo4j.getMoviesByYear(yearReleased);
     }
 
-    private String handleGetActorsByAward(String requestBody) throws JSONException {
-        JSONObject json = new JSONObject(requestBody);
-        String award = json.getString("award");
+    private String handleGetActorsByAward(String award) throws JSONException {
         return neo4j.getActorsByAward(award);
     }
 
@@ -336,8 +321,10 @@ public class RequestHandler implements HttpHandler {
             String[] pairs = query.split("&");
             for (String pair : pairs) {
                 String[] keyValue = pair.split("=");
-                if (keyValue.length == 2) {
+                if (keyValue.length > 1) {
                     params.put(keyValue[0], keyValue[1]);
+                } else {
+                    params.put(keyValue[0], "");
                 }
             }
         }
